@@ -1,5 +1,6 @@
 type LogLevel = "DBG" | "INF" | "ERR" | "WRN" | "TRC";
 import crypto, { randomUUID } from "crypto";
+import fs from "fs";
 import { Component } from "retire/lib/types";
 import { generatePURL } from "retire/lib/reporters/utils";
 import { unique } from "./utils";
@@ -326,9 +327,15 @@ export const jsonLogger: Logger = {
   setLevel,
   traceEnabled,
   close: () => {
-    console.log(
-      JSON.stringify(convertToCycloneDX(collectedResults), undefined, 2),
+    const sbom = JSON.stringify(
+      convertToCycloneDX(collectedResults),
+      undefined,
+      2,
     );
+    console.log(sbom);
+    if (sbomFilePath) {
+      fs.writeFileSync(sbomFilePath, sbom, "utf-8");
+    }
   },
   logResults: (
     url: string,
@@ -343,8 +350,8 @@ export const jsonLogger: Logger = {
 };
 
 export const consoleLogger: Logger = {
-  open: () => {
-    return;
+  open: (url: string) => {
+    collectedResults.url = url;
   },
   enableColor: () => {
     color = true;
@@ -360,13 +367,22 @@ export const consoleLogger: Logger = {
   setLevel,
   traceEnabled,
   close: () => {
-    return;
+    if (sbomFilePath) {
+      fs.writeFileSync(
+        sbomFilePath,
+        JSON.stringify(convertToCycloneDX(collectedResults), undefined, 2),
+        "utf-8",
+      );
+    }
   },
   logResults: (
     url: string,
     initiator: string | undefined,
     results: Array<Component>,
   ) => {
+    if (sbomFilePath) {
+      collectedResults.components.push({ url, initiator, results });
+    }
     const vulnerableLibs = results.filter(
       (lib) => (lib.vulnerabilities ?? []).length > 0,
     );
@@ -416,6 +432,9 @@ export const consoleLogger: Logger = {
     }
   },
   logServices: (services: Services) => {
+    if (sbomFilePath) {
+      collectedResults.services = { ...collectedResults.services, ...services };
+    }
     if (level == "TRC" || level == "DBG") {
       Object.entries(services).forEach(([k, s]) => {
         logMsg(
@@ -446,6 +465,12 @@ const wrapper = {
 
 export function useJson() {
   wrapper.log = jsonLogger;
+}
+
+let sbomFilePath: string | undefined;
+
+export function useJsonFile(path: string) {
+  sbomFilePath = path;
 }
 
 export default new Proxy(consoleLogger, {
