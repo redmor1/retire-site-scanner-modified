@@ -164,7 +164,7 @@ function _http2Request(
           );
         });
         const content: Array<Buffer> = [];
-        req.on("data", (d) => {
+        req.on("data", (d: Buffer) => {
           content.push(d);
         });
         req.on("end", () => {
@@ -174,7 +174,7 @@ function _http2Request(
             contentType: resHeaders["content-type"],
           });
         });
-        req.on("error", (err) => {
+        req.on("error", (err: NodeJS.ErrnoException) => {
           if (
             err.errno == -505 ||
             err.code == "ECONNRESET" ||
@@ -205,7 +205,7 @@ function _http2Request(
             initialWindowSize: 1024 * 1024 * 10,
           },
         });
-        sessions[origin].on("error", (err) => {
+        sessions[origin].on("error", (err: NodeJS.ErrnoException) => {
           delete sessions[origin];
           if (
             err.errno == -505 ||

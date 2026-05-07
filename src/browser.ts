@@ -68,7 +68,7 @@ async function loadPage(
         try {
           const text = await response.text();
           javascripts.push([response.url(), text, initiator]);
-        } catch (err) {
+        } catch {
           log.warn(
             "Will retry failed to load body for " + response.url(),
             response.status(),
@@ -79,7 +79,7 @@ async function loadPage(
             cookieHeader = {
               cookie: cookies.map((c) => `${c.name}=${c.value}`).join("; "),
             };
-          } catch (err) {
+          } catch {
             log.warn("Failed to get cookies. Ignoring the cookies");
           }
           needsRetry.push([
@@ -119,7 +119,7 @@ async function loadPage(
           log.debug("Retrying " + url + " headers: " + JSON.stringify(headers));
           const response = await request(url, headers);
           javascripts.push([url, response.content, initiator]);
-        } catch (err) {
+        } catch {
           log.warn("Failed to download body for: ", url);
         }
       }),

@@ -80,7 +80,7 @@ async function unwrapSourceMaps(maps: string[]): Promise<Array<string>> {
       content.forEach((x) => {
         if (x != null) all.push(x);
       });
-    } catch (e) {
+    } catch {
       log.debug("Failed to parse one of the source maps");
     }
   }
