@@ -79,7 +79,9 @@ async function loadPage(
             cookieHeader = {
               cookie: cookies.map((c) => `${c.name}=${c.value}`).join("; "),
             };
-          } catch {}
+          } catch {
+            log.warn("Failed to get cookies. Ignoring the cookies");
+          }
           needsRetry.push([
             response.url(),
             {
@@ -117,7 +119,9 @@ async function loadPage(
           log.debug("Retrying " + url + " headers: " + JSON.stringify(headers));
           const response = await request(url, headers);
           javascripts.push([url, response.content, initiator]);
-        } catch {}
+        } catch {
+          log.warn("Failed to download body for: ", url);
+        }
       }),
     );
     await page.close();
