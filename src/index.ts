@@ -2,7 +2,7 @@
 
 import browser from "./browser";
 
-import log, { Services, useJson } from "./log";
+import log, { Services, useJson, useJsonFile } from "./log";
 import retire, { Scanner } from "./retireWrapper";
 import { Component } from "retire/lib/types";
 import { tryToGetSourceMap } from "./sourceMapResolver";
@@ -85,6 +85,7 @@ if (!urlToScan) {
 }
 const knownArgs = [
   "--sbom",
+  "--sbom-file",
   "-v",
   "-vv",
   "--docker",
@@ -125,6 +126,15 @@ if (process.argv.includes("--cookies")) {
 }
 
 if (process.argv.includes("--sbom")) useJson();
+if (process.argv.includes("--sbom-file")) {
+  const sbomFileIndex = process.argv.indexOf("--sbom-file");
+  if (sbomFileIndex !== -1 && sbomFileIndex + 1 < process.argv.length) {
+    useJsonFile(process.argv[sbomFileIndex + 1]);
+  } else {
+    console.warn("ERROR: --sbom-file requires a file path argument");
+    process.exit(1);
+  }
+}
 if (process.argv.includes("-v")) log.setLevel("DBG");
 if (process.argv.includes("-vv")) log.setLevel("TRC");
 if (process.argv.includes("--color")) log.enableColor();
