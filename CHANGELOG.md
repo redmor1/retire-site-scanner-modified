@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.7.0
+
+### Enhancement
+
+* Add `--sbom-file` argument to write SBOM output to a file
+
 ## 1.6.5
 
 ### Bugfix
