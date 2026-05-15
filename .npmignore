@@ -1,3 +1,4 @@
 tests/
 Dockerfile
 publish.sh
+CLAUDE.md
