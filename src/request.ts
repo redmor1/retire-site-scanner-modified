@@ -114,6 +114,8 @@ function _request(
 
 const sessions: Record<string, ClientHttp2Session> = {};
 const disableHttp2For = new Set<string>();
+type PendingCallback = (session: ClientHttp2Session | null) => void;
+const pendingConnects: Record<string, PendingCallback[]> = {};
 
 function _http2Request(
   url: string,
@@ -199,6 +201,7 @@ function _http2Request(
       };
 
       if (!sessions[origin]) {
+        pendingConnects[origin] = [];
         sessions[origin] = http2.connect(origin, {
           rejectUnauthorized: false,
           settings: {
@@ -206,6 +209,8 @@ function _http2Request(
           },
         });
         sessions[origin].on("error", (err: NodeJS.ErrnoException) => {
+          const pending = pendingConnects[origin] ?? [];
+          delete pendingConnects[origin];
           delete sessions[origin];
           if (
             err.errno == -505 ||
@@ -221,14 +226,19 @@ function _http2Request(
               disableHttp2For.add(origin);
             }
             _request(url, headers).then(resolve).catch(reject);
+            pending.forEach((cb) => cb(null));
           } else {
             log.warn("HTTP2 session failed for " + origin, err);
             reject(err);
+            pending.forEach((cb) => cb(null));
           }
         });
         sessions[origin].on("connect", () => {
           log.trace("HTTP2 connected for " + origin);
+          const pending = pendingConnects[origin] ?? [];
+          delete pendingConnects[origin];
           runRequest(sessions[origin]);
+          pending.forEach((cb) => cb(sessions[origin]));
         });
         sessions[origin].on("close", () => {
           log.trace("HTTP2 session closed for " + origin);
@@ -249,6 +259,11 @@ function _http2Request(
         sessions[origin].on("frameError", () => {
           log.trace("HTTP2 session frameError " + origin);
           delete sessions[origin];
+        });
+      } else if (pendingConnects[origin]) {
+        pendingConnects[origin].push((session) => {
+          if (session) runRequest(session);
+          else _request(url, headers).then(resolve).catch(reject);
         });
       } else {
         runRequest(sessions[origin]);
