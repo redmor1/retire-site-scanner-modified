@@ -30,20 +30,22 @@ type CombinedRepository = {
 
 async function loadRetireJSRepo(): Promise<CombinedRepository> {
   return new Promise((resolve, reject) => {
-    https.get(
-      "https://raw.githubusercontent.com/RetireJS/retire.js/master/repository/jsrepository-v3.json",
-      (res) => {
-        const data = [] as Buffer[];
-        res.on("data", (d) => data.push(d));
-        res.on("end", () => {
-          const repoData = Buffer.concat(data).toString();
-          const versioned = retire.replaceVersion(repoData);
-          const repo = JSON.parse(versioned);
-          resolve(repo);
-        });
-        res.on("error", (err) => reject(err));
-      },
-    );
+    https
+      .get(
+        "https://raw.githubusercontent.com/RetireJS/retire.js/master/repository/jsrepository-v3.json",
+        (res) => {
+          const data = [] as Buffer[];
+          res.on("data", (d) => data.push(d));
+          res.on("end", () => {
+            const repoData = Buffer.concat(data).toString();
+            const versioned = retire.replaceVersion(repoData);
+            const repo = JSON.parse(versioned);
+            resolve(repo);
+          });
+          res.on("error", (err) => reject(err));
+        },
+      )
+      .on("error", (err) => reject(err));
   });
 }
 

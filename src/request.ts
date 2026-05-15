@@ -79,6 +79,7 @@ function _request(
           const content: Array<Buffer> = [];
           res.on("error", (err) => {
             log.warn(err);
+            reject(err);
           });
           res.on("data", (d) => {
             content.push(d);
