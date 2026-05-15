@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.7.3
+
+### Bugfix
+
+* Deduplicate vulnerabilities in CycloneDX output — advisories with the same ID are now merged into a single entry, with all affected components listed in the `affects` array
+
 ## 1.7.2
 
 ### Bugfix

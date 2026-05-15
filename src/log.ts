@@ -193,7 +193,7 @@ function formatContentTypes(
 
 export function convertToCycloneDX(resultToConvert: typeof collectedResults) {
   const components = new Map<string, CycloneDXComponent>();
-  const vulnerabilities: Array<CycloneDXVulnerability> = [];
+  const vulnerabilities = new Map<string, CycloneDXVulnerability>();
   const bomRef = randomUUID();
   const services: Array<CycloneDXService> = Object.entries(
     resultToConvert.services,
@@ -209,7 +209,6 @@ export function convertToCycloneDX(resultToConvert: typeof collectedResults) {
   resultToConvert.components.forEach((res) => {
     res.results.forEach((c) => {
       const key = c.component + "@" + c.version;
-      const found = components.has(key);
       const nameParts = c.component.split("/").reverse();
       const comp: CycloneDXComponent = components.get(key) || {
         type: "library",
@@ -229,29 +228,37 @@ export function convertToCycloneDX(resultToConvert: typeof collectedResults) {
         !comp.properties.some((c) => c.value == res.initiator)
       )
         comp.properties.push({ name: "initiator", value: res.initiator });
-      if (!found) {
-        (c.vulnerabilities ?? []).forEach((v) => {
-          const ids = ([] as Array<string | undefined>)
-            .concat(v.identifiers?.CVE || [])
-            .concat([
-              v.identifiers?.githubID,
-              v.identifiers?.bug ? `bug-${v.identifiers.bug}` : undefined,
-              v.identifiers?.issue
-                ? `GH-issue-${v.identifiers.issue}`
-                : undefined,
-              "retid" in v.identifiers
-                ? `retirejs-${v.identifiers.retid}`
-                : undefined,
-            ])
-            .filter((s) => s != undefined) as Array<string>;
-          const id = ids[0] || "missing id";
+      (c.vulnerabilities ?? []).forEach((v) => {
+        const ids = ([] as Array<string | undefined>)
+          .concat(v.identifiers?.CVE || [])
+          .concat([
+            v.identifiers?.githubID,
+            v.identifiers?.bug ? `bug-${v.identifiers.bug}` : undefined,
+            v.identifiers?.issue
+              ? `GH-issue-${v.identifiers.issue}`
+              : undefined,
+            "retid" in v.identifiers
+              ? `retirejs-${v.identifiers.retid}`
+              : undefined,
+          ])
+          .filter((s) => s != undefined) as Array<string>;
+        const id = ids[0] || "missing id";
+        const existing = vulnerabilities.get(id);
+        if (existing) {
+          if (!existing.affects.some((a) => a.ref === comp["bom-ref"])) {
+            existing.affects.push({
+              ref: comp["bom-ref"],
+              versions: [{ version: c.version }],
+            });
+          }
+        } else {
           const otherRefs = ids
             .filter((x) => x.startsWith("CVE-"))
             .map((i) => ({
               id: i,
               source: { url: `https://nvd.nist.gov/vuln/detail/${i}` },
             }));
-          vulnerabilities.push({
+          vulnerabilities.set(id, {
             "bom-ref": randomUUID(),
             advisories: v.info.map((u) => ({ url: u })),
             id: id,
@@ -266,8 +273,8 @@ export function convertToCycloneDX(resultToConvert: typeof collectedResults) {
               },
             ],
           });
-        });
-      }
+        }
+      });
     });
   });
   return {
