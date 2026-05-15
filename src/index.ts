@@ -78,7 +78,15 @@ async function checkURL(
   }
 }
 
-const [, , urlToScan] = process.argv.filter((s) => !s.startsWith("-"));
+const argsWithValues = new Set(["--sbom-file", "--header", "--cookies"]);
+const consumedIndices = new Set([0, 1]);
+for (let i = 2; i < process.argv.length; i++) {
+  if (process.argv[i].startsWith("-")) {
+    consumedIndices.add(i);
+    if (argsWithValues.has(process.argv[i])) consumedIndices.add(++i);
+  }
+}
+const [urlToScan] = process.argv.filter((_, i) => !consumedIndices.has(i));
 if (!urlToScan) {
   console.warn("ERROR: No url given");
   process.exit(1);

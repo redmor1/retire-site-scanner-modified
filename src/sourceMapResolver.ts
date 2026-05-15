@@ -57,11 +57,11 @@ export async function tryToGetSourceMap(
       }
     }
 
-    if (inter) clearTimeout(inter);
+    if (inter) clearInterval(inter);
     return await unwrapSourceMaps(sources);
   } catch (err) {
     log.warn("Failed to handle source maps for " + uri, err);
-    if (inter) clearTimeout(inter);
+    if (inter) clearInterval(inter);
     return [];
   }
 }
