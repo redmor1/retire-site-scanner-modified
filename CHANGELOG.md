@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.7.1
+
+### Bugfix
+
+* Various smaller bugs
+
 ## 1.7.0
 
 ### Enhancement
