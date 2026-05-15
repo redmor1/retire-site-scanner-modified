@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.7.2
+
+### Bugfix
+
+* Fix URL argument parsing when `--header`, `--cookies`, or `--sbom-file` values were present
+* Fix missing request-level error handler when downloading the retire.js vulnerability database
+* Fix HTTP/1.1 response stream errors leaving the promise permanently pending
+* Fix HTTP/2 race condition where concurrent requests to the same origin fired on a not-yet-connected session
+
 ## 1.7.1
 
 ### Bugfix
