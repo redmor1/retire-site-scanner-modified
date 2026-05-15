@@ -1,5 +1,4 @@
 import https from "https";
-import URL from "url";
 
 async function getList(): Promise<Array<string>> {
   return new Promise((resolve, reject) => {
@@ -30,7 +29,7 @@ let data = [] as Array<string>;
 
 async function getDomain(url: string, baseDomain: string): Promise<string> {
   if (data.length == 0) data = await getList();
-  const u = URL.parse(url);
+  const u = new URL(url);
   const domain = u.hostname || baseDomain;
   for (const d of data) {
     if (d.startsWith("*.") && domain.endsWith(d.replace("*", ""))) {

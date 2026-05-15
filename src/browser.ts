@@ -2,7 +2,6 @@ import log from "./log";
 import puppeteer, { Browser, Page, TimeoutError } from "puppeteer";
 import request from "./request";
 import getDomain from "./suffix-list";
-import URL from "node:url";
 
 export const UserAgent =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36";
@@ -96,7 +95,7 @@ async function loadPage(
       if (response.url().startsWith("http")) {
         const domain = await getDomain(response.url(), url);
         if (domain != urlDomain) {
-          const u = URL.parse(response.url());
+          const u = new URL(response.url());
           onServiceInvoked(
             domain,
             `${u.protocol}//${u.hostname}${u.pathname}`,

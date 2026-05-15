@@ -4,7 +4,6 @@ import http2, {
   IncomingHttpHeaders,
   IncomingHttpStatusHeader,
 } from "http2";
-import URL from "url";
 import http from "http";
 import log from "./log";
 import { UserAgent } from "./browser";
@@ -129,7 +128,7 @@ function _http2Request(
         resolve({ statusCode: 404, content: "", contentType: undefined });
         return;
       }
-      const parsedURL = URL.parse(url);
+      const parsedURL = new URL(url);
       const origin = `${parsedURL.protocol}//${parsedURL.hostname}${
         parsedURL.port ? ":" + parsedURL.port : ""
       }`;
@@ -140,7 +139,7 @@ function _http2Request(
 
       const runRequest = (session: ClientHttp2Session) => {
         const defaultOptions = {
-          ":path": (parsedURL.path || "/") + ("?" + parsedURL.query),
+          ":path": (parsedURL.pathname || "/") + (parsedURL.search || ""),
           "user-agent": UserAgent,
           "cache-control": "no-cache",
           "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
