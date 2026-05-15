@@ -18,7 +18,7 @@
     "watch": "tsc --watch",
     "typecheck": "tsc --noEmit",
     "check": "npm run lint && npm run typecheck",
-    "test": "mocha --require tsx/cjs 'tests/**/*.ts'",
+    "test": "tsx --test 'tests/**/*.ts'",
     "lint": "eslint . --fix"
   },
   "dependencies": {
@@ -29,17 +29,13 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@types/chai": "^5.2.3",
-    "@types/mocha": "^10.0.10",
     "@types/node": "^25.6.1",
     "@typescript-eslint/eslint-plugin": "^8.59.2",
     "@typescript-eslint/parser": "^8.59.2",
-    "chai": "^6.2.2",
     "eslint": "^10.3.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "jsonschema": "^1.4.1",
-    "mocha": "^11.7.5",
     "prettier": "^3.8.3",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",

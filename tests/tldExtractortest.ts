@@ -1,4 +1,5 @@
-import { expect } from "chai";
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
 import getDomain from "../src/suffix-list";
 
 async function expectDomain(
@@ -6,7 +7,7 @@ async function expectDomain(
   expectedDomain: string,
 ): Promise<void> {
   const d = await getDomain("https://" + target, "https://www.banana.com");
-  expect(d).to.equal(expectedDomain);
+  assert.equal(d, expectedDomain);
 }
 
 describe("tld extractor", () => {

@@ -1,4 +1,5 @@
-import { expect } from "chai";
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
 // @typescript-eslint/no-var-requires
 const jsonSchema = require("./schema/bom-1.4.schema.json");
 const jsfSchema = require("./schema/jsf-0.82.schema.json");
@@ -10,7 +11,6 @@ describe("cyclonedx-json", () => {
   it("should generate according to schema", () => {
     // @ts-ignore
     const cycloneDx = convertToCycloneDX(exampleData);
-    //console.log(cycloneDx);
     const validator = new Validator();
     validator.addSchema(
       jsfSchema,
@@ -20,6 +20,6 @@ describe("cyclonedx-json", () => {
     if (!result.valid) {
       console.log(result.errors);
     }
-    expect(result.valid).to.eq(true);
+    assert.equal(result.valid, true);
   });
 });
