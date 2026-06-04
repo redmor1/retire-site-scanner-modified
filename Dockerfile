@@ -1,6 +1,10 @@
-FROM --platform=linux/amd64 node:latest
+FROM --platform=linux/amd64 node:26.3.0-slim
 
 RUN apt update && apt install -y chromium
+
+# need this for puppeteer to work in container, otherwise it tries to download own chromium and errors out.
+ENV PUPPETEER_SKIP_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 WORKDIR /app
 

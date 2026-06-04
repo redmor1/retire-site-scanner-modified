@@ -19,7 +19,8 @@
     "typecheck": "tsc --noEmit",
     "check": "npm run lint && npm run typecheck",
     "test": "tsx --test 'tests/**/*.ts'",
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
+    "prepare": "npm run build"
   },
   "dependencies": {
     "astronomical": "^3.0.5",
