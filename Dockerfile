@@ -11,7 +11,7 @@ RUN npm install -g pnpm
 
 WORKDIR /app
 
-COPY --chown=1000:1000 *.json /app/
+COPY --chown=1000:1000 *.json *.yaml /app/
 COPY --chown=1000:1000 src/ /app/src/ 
 RUN chown 1000 /app
 USER 1000
