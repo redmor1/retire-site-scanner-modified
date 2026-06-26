@@ -6,6 +6,9 @@ RUN apt update && apt install -y chromium
 ENV PUPPETEER_SKIP_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
+RUN npm install -g pnpm
+
+
 WORKDIR /app
 
 COPY --chown=1000:1000 *.json /app/
