@@ -12,6 +12,6 @@ COPY --chown=1000:1000 *.json /app/
 COPY --chown=1000:1000 src/ /app/src/ 
 RUN chown 1000 /app
 USER 1000
-RUN npm install
+RUN pnpm install
 
-ENTRYPOINT [ "npm", "run", "start", "--", "--docker" ]
+ENTRYPOINT [ "pnpm", "run", "start", "--", "--docker" ]

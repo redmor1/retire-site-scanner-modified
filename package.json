@@ -1,14 +1,8 @@
 {
-  "author": "Erlend Oftedal <erlend@oftedal.no>",
-  "name": "retire-site-scanner",
+  "private": true,
+  "name": "retire-site-scanner-modified",
   "version": "1.7.3",
-  "license": "Apache-2.0",
-  "description": "A scanner for checking a web site using retire.js",
   "main": "dist/index.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/RetireJS/retire-site-scanner.git"
-  },
   "bin": {
     "retire-site-scanner": "dist/index.js"
   },
@@ -17,10 +11,10 @@
     "build": "tsc --build",
     "watch": "tsc --watch",
     "typecheck": "tsc --noEmit",
-    "check": "npm run lint && npm run typecheck",
+    "check": "pnpm run lint && pnpm run typecheck",
     "test": "tsx --test 'tests/**/*.ts'",
     "lint": "eslint . --fix",
-    "prepare": "npm run build"
+    "prepare": "pnpm run build"
   },
   "dependencies": {
     "astronomical": "^3.0.5",
@@ -43,15 +37,6 @@
     "tsx": "^4.21.0",
     "typescript": "^6.0.3"
   },
-  "keywords": [
-    "audit",
-    "scanner",
-    "security",
-    "sbom",
-    "sbom-tool",
-    "sbom-generator",
-    "cli"
-  ],
   "files": [
     "dist/**/*"
   ]
