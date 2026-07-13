@@ -17,4 +17,4 @@ RUN chown 1000 /app
 USER 1000
 RUN pnpm install
 
-ENTRYPOINT [ "pnpm", "run", "start", "--", "--docker" ]
+ENTRYPOINT [ "npx", "ts-node", "src/index", "--docker" ]
